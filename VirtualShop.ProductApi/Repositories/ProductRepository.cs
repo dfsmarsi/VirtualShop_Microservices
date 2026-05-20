@@ -15,12 +15,15 @@ namespace VirtualShop.ProductApi.Repositories
 
         public async Task<IEnumerable<Product>> GetAll()
         {
-            return await _context.Products.ToListAsync();
+            return await _context.Products.Include(p => p.Category).ToListAsync();
         }
 
         public async Task<Product> GetProductById(int id)
         {
-            return await _context.Products.Where(p => p.ProductId == id).FirstOrDefaultAsync();
+            return await _context.Products
+                .Include(p => p.Category)
+                .Where(p => p.ProductId == id)
+                .FirstOrDefaultAsync();
         }
 
         public async Task<Product> Create(Product product)
