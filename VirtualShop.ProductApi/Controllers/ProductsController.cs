@@ -46,7 +46,7 @@ namespace VirtualShop.ProductApi.Controllers
 
             await _productService.AddProduct(productDto);
 
-            return new CreatedAtActionResult("GetProductById", null, new { id = productDto.ProductId }, productDto);
+            return CreatedAtAction(nameof(GetById), new { id = productDto.ProductId }, productDto);
         }
 
         [HttpPut("{id:int}")]
