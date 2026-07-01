@@ -48,4 +48,55 @@ public class ProductsController : Controller
 
         return RedirectToAction(nameof(Index));
     }
+
+    [HttpGet]
+    public async Task<IActionResult> UpdateProduct(int id)
+    {
+        ViewBag.CategoryId = new SelectList(await _categoryService.GetAllCategories(), "CategoryId", "Name");
+        var result = await _productService.FindProductById(id);
+
+        if (result is null)
+            return View("Error");
+
+        return View(result);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> UpdateProduct(ProductViewModel productVM)
+    {
+        if (ModelState.IsValid)
+        {
+            var result = await _productService.UpdateProduct(productVM);
+
+            if (result is null)
+                return View("Error");
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        ViewBag.CategoryId = new SelectList(await _categoryService.GetAllCategories(), "CategoryId", "Name");
+        return View(productVM);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> DeleteProduct(int id)
+    {
+        var result = await _productService.FindProductById(id);
+
+        if (result is null)
+            return View("Error");
+
+        return View(result);
+    }
+
+    [HttpPost, ActionName("DeleteProduct")]
+    public async Task<IActionResult> DeleteProductConfirmed(int id)
+    {
+        var success = await _productService.DeleteProduct(id);
+
+        if (!success)
+            return View("Error");
+
+        return RedirectToAction(nameof(Index));
+    }
 }

@@ -38,11 +38,11 @@ else
                     <td>@product.Price?.ToString("C")</td>
                     <td>@product.Stock</td>
                     <td class="text-center">
-                        <a asp-action="Update" asp-route-id="@product.ProductId"
+                        <a asp-action="UpdateProduct" asp-route-id="@product.ProductId"
                            class="btn btn-sm btn-outline-primary me-1" title="Edit">
                             <i class="fa-solid fa-pen-to-square"></i>
                         </a>
-                        <a asp-action="Delete" asp-route-id="@product.ProductId"
+                        <a asp-action="DeleteProduct" asp-route-id="@product.ProductId"
                            class="btn btn-sm btn-outline-danger" title="Delete">
                             <i class="fa-solid fa-trash"></i>
                         </a>

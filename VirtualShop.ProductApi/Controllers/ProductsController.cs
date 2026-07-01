@@ -49,10 +49,10 @@ namespace VirtualShop.ProductApi.Controllers
             return CreatedAtAction(nameof(GetById), new { id = productDto.ProductId }, productDto);
         }
 
-        [HttpPut("{id:int}")]
-        public async Task<ActionResult> Put(int id, [FromBody] ProductDTO productDto)
+        [HttpPut]
+        public async Task<ActionResult> Put([FromBody] ProductDTO productDto)
         {
-            if (productDto == null || id != productDto.ProductId)
+            if (productDto == null)
                 return BadRequest("Product data is invalid!");
 
             await _productService.UpdateProduct(productDto);
