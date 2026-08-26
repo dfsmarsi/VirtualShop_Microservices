@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using VirtualShop.ProductApi.DTOs;
+using VirtualShop.ProductApi.Roles;
 using VirtualShop.ProductApi.Services;
 
 namespace VirtualShop.ProductApi.Controllers
@@ -17,6 +19,7 @@ namespace VirtualShop.ProductApi.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<CategoryDTO>>> Get()
         {
             var categoriesDto = await _categoryService.GetCategories();
@@ -28,6 +31,7 @@ namespace VirtualShop.ProductApi.Controllers
         }
 
         [HttpGet("{id:int}", Name = "GetCategoryById")]
+        [Authorize]
         public async Task<ActionResult<CategoryDTO>> GetById(int id)
         {
             var categoryDto = await _categoryService.GetCategoryById(id);
@@ -37,6 +41,7 @@ namespace VirtualShop.ProductApi.Controllers
         }
 
         [HttpGet("products")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<CategoryDTO>>> GetCategoriesProducts()
         {
             var categoriesDto = await _categoryService.GetCategoriesProducts();
@@ -46,6 +51,7 @@ namespace VirtualShop.ProductApi.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult> Post([FromBody] CategoryDTO categoryDto)
         {
             if (categoryDto == null)
@@ -55,6 +61,7 @@ namespace VirtualShop.ProductApi.Controllers
         }
 
         [HttpPut("{id:int}")]
+        [Authorize]
         public async Task<ActionResult> Put(int id, [FromBody] CategoryDTO categoryDto)
         {
             if (categoryDto == null || id != categoryDto.CategoryId)
@@ -66,6 +73,7 @@ namespace VirtualShop.ProductApi.Controllers
         }
 
         [HttpDelete("{id:int}")]
+        [Authorize(Roles = Role.Admin)]
         public async Task<ActionResult<CategoryDTO>> Delete(int id)
         {
             var categoryDto = await _categoryService.GetCategoryById(id);

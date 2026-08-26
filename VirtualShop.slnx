@@ -1,4 +1,9 @@
 <Solution>
-  <Project Path="VirtualShop.ProductApi/VirtualShop.ProductApi.csproj" />
-  <Project Path="VShop.Web/VShop.Web.csproj" Id="32b1e2d8-d4dc-4947-b39e-40a400e0721f" />
+  <Folder Name="/Backend/">
+    <Project Path="VirtualShop.ProductApi/VirtualShop.ProductApi.csproj" />
+    <Project Path="VShopIdentityServer/VShopIdentityServer.csproj" Id="c6dc8517-56c6-455f-b105-9e7cedaea31c" />
+  </Folder>
+  <Folder Name="/Frontend/">
+    <Project Path="VShop.Web/VShop.Web.csproj" Id="32b1e2d8-d4dc-4947-b39e-40a400e0721f" />
+  </Folder>
 </Solution>
