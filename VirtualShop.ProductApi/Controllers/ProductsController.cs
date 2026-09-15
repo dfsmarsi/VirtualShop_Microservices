@@ -18,11 +18,10 @@ namespace VirtualShop.ProductApi.Controllers
         }
 
         [HttpGet]
-        [Authorize]
         public async Task<ActionResult<IEnumerable<ProductDTO>>> Get()
         {
             var productsDto = await _productService.GetProducts();
-
+             
             if (productsDto == null)
                 return NotFound("Products not found!");
 
@@ -30,7 +29,6 @@ namespace VirtualShop.ProductApi.Controllers
         }
 
         [HttpGet("{id:int}", Name = "GetProductById")]
-        [Authorize]
         public async Task<ActionResult<ProductDTO>> GetById(int id)
         {
             var productDto = await _productService.GetProductById(id);
@@ -42,7 +40,7 @@ namespace VirtualShop.ProductApi.Controllers
         }
 
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles = Role.Admin)]
         public async Task<ActionResult> Post([FromBody] ProductDTO productDto)
         {
             if (productDto == null)
@@ -54,7 +52,7 @@ namespace VirtualShop.ProductApi.Controllers
         }
 
         [HttpPut]
-        [Authorize]
+        [Authorize(Roles = Role.Admin)]
         public async Task<ActionResult> Put([FromBody] ProductDTO productDto)
         {
             if (productDto == null)

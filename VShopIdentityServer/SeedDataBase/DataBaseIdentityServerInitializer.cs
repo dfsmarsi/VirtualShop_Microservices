@@ -1,4 +1,4 @@
-﻿using Duende.IdentityModel;
+using Duende.IdentityModel;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using VShopIdentityServer.Configuration;
@@ -38,29 +38,29 @@ public class DataBaseIdentityServerInitializer : IDataBaseSeedInitializer
 
     public void InitializeSeedUsers()
     {
-        if(_userManager.FindByEmailAsync("admin1@google.com").Result == null)
+        if (_userManager.FindByEmailAsync("admin@vshop.com.br").Result == null)
         {
             ApplicationUser admin = new ApplicationUser()
             {
-                UserName = "admin1",
-                NormalizedUserName = "ADMIN1",
-                Email = "admin1@google.com",
-                NormalizedEmail = "ADMIN1@GOOGLE.COM",
+                UserName = "admin",
+                NormalizedUserName = "ADMIN",
+                Email = "admin@vshop.com.br",
+                NormalizedEmail = "ADMIN@VSHOP.COM.BR",
                 EmailConfirmed = true,
                 LockoutEnabled = false,
                 PhoneNumber = "+55 (11) 99999-9999",
-                FirstName = "Braia",
-                LastName = "Senju",
+                FirstName = "Douglas",
+                LastName = "Admin",
                 SecurityStamp = Guid.NewGuid().ToString()
             };
-            
-            IdentityResult resultAdmin = _userManager.CreateAsync(admin, "Admin123*").Result;
 
-            if(resultAdmin.Succeeded)
+            IdentityResult resultAdmin = _userManager.CreateAsync(admin, "Admin@123").Result;
+
+            if (resultAdmin.Succeeded)
             {
                 _userManager.AddToRoleAsync(admin, IdentityConfiguration.Admin).Wait();
 
-                var adminClaims = _userManager.AddClaimsAsync(admin, new Claim[]
+                _ = _userManager.AddClaimsAsync(admin, new Claim[]
                 {
                     new Claim(JwtClaimTypes.Name, $"{admin.FirstName} {admin.LastName}"),
                     new Claim(JwtClaimTypes.GivenName, admin.FirstName),
@@ -68,37 +68,37 @@ public class DataBaseIdentityServerInitializer : IDataBaseSeedInitializer
                     new Claim(JwtClaimTypes.Role, IdentityConfiguration.Admin)
                 }).Result;
             }
+        }
 
-            if(_userManager.FindByEmailAsync("client1@google.com").Result == null)
+        if (_userManager.FindByEmailAsync("cliente@vshop.com.br").Result == null)
+        {
+            ApplicationUser client = new ApplicationUser()
             {
-                ApplicationUser client = new ApplicationUser()
+                UserName = "cliente",
+                NormalizedUserName = "CLIENTE",
+                Email = "cliente@vshop.com.br",
+                NormalizedEmail = "CLIENTE@VSHOP.COM.BR",
+                EmailConfirmed = true,
+                LockoutEnabled = false,
+                PhoneNumber = "+55 (11) 99999-9999",
+                FirstName = "Douglas",
+                LastName = "Cliente",
+                SecurityStamp = Guid.NewGuid().ToString()
+            };
+
+            IdentityResult resultClient = _userManager.CreateAsync(client, "Cliente@123").Result;
+
+            if (resultClient.Succeeded)
+            {
+                _userManager.AddToRoleAsync(client, IdentityConfiguration.Client).Wait();
+
+                _ = _userManager.AddClaimsAsync(client, new Claim[]
                 {
-                    UserName = "client1",
-                    NormalizedUserName = "CLIENT1",
-                    Email = "client1@google.com",
-                    NormalizedEmail = "CLIENT1@GOOGLE.COM",
-                    EmailConfirmed = true,
-                    LockoutEnabled = false,
-                    PhoneNumber = "+55 (11) 99999-9999",
-                    FirstName = "Client",
-                    LastName = "One",
-                    SecurityStamp = Guid.NewGuid().ToString()
-                };
-
-                IdentityResult resultClient = _userManager.CreateAsync(client, "Client123*").Result;
-
-                if(resultClient.Succeeded)
-                {
-                    _userManager.AddToRoleAsync(client, IdentityConfiguration.Client).Wait();
-
-                    var clientClaims = _userManager.AddClaimsAsync(client, new Claim[]
-                    {
-                        new Claim(JwtClaimTypes.Name, $"{client.FirstName} {client.LastName}"),
-                        new Claim(JwtClaimTypes.GivenName, client.FirstName),
-                        new Claim(JwtClaimTypes.FamilyName, client.LastName),
-                        new Claim(JwtClaimTypes.Role, IdentityConfiguration.Client)
-                    }).Result;
-                }
+                    new Claim(JwtClaimTypes.Name, $"{client.FirstName} {client.LastName}"),
+                    new Claim(JwtClaimTypes.GivenName, client.FirstName),
+                    new Claim(JwtClaimTypes.FamilyName, client.LastName),
+                    new Claim(JwtClaimTypes.Role, IdentityConfiguration.Client)
+                }).Result;
             }
         }
     }

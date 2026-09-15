@@ -1,0 +1,12 @@
+@model (string ImageUrl, string AltText, string CssClass, string Style)
+
+@if (!string.IsNullOrEmpty(Model.ImageUrl))
+{
+    <img src="/images/@Model.ImageUrl" alt="@Model.AltText"
+         class="@Model.CssClass" style="@Model.Style"
+         onerror="this.nextElementSibling.classList.remove('d-none'); this.remove()" />
+}
+<div class="img-placeholder @(!string.IsNullOrEmpty(Model.ImageUrl) ? "d-none" : "")"
+     style="background:#f0f0f0;display:flex;align-items:center;justify-content:center;color:#aaa;font-size:3rem;width:100%;height:200px;">
+    <span>&#128247;</span>
+</div>

@@ -19,7 +19,6 @@ namespace VirtualShop.ProductApi.Controllers
         }
 
         [HttpGet]
-        [Authorize]
         public async Task<ActionResult<IEnumerable<CategoryDTO>>> Get()
         {
             var categoriesDto = await _categoryService.GetCategories();
