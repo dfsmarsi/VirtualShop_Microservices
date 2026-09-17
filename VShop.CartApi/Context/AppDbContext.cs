@@ -17,7 +17,7 @@ namespace VShop.CartApi.Context
         {
             //Product
             modelBuilder.Entity<Product>().HasKey(p => p.Id);
-            modelBuilder.Entity<Product>().Property(p => p.Id).ValueGeneratedOnAdd();
+            modelBuilder.Entity<Product>().Property(p => p.Id).ValueGeneratedNever();
             modelBuilder.Entity<Product>().Property(p => p.Name).IsRequired().HasMaxLength(100);
             modelBuilder.Entity<Product>().Property(p => p.Description).HasMaxLength(500);
             modelBuilder.Entity<Product>().Property(p => p.Price).IsRequired().HasPrecision(12, 2);
@@ -28,6 +28,13 @@ namespace VShop.CartApi.Context
             modelBuilder.Entity<CartHeader>().Property(c => c.UserId).IsRequired().HasMaxLength(255);
             modelBuilder.Entity<CartHeader>().Property(c => c.CouponCode).HasMaxLength(100);
 
+            //CartItem
+            modelBuilder.Entity<CartItem>()
+                .HasOne<CartHeader>()
+                .WithMany()
+                .HasForeignKey(ci => ci.CartHeaderId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired();
         }
     }
 }

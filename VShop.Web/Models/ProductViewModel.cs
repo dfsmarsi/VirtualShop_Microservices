@@ -21,6 +21,9 @@ public class ProductViewModel
     [Range(0, long.MaxValue, ErrorMessage = "Stock must be zero or greater")]
     public long Stock { get; set; }
 
+    [Range(1, 100)]
+    public int Quantity { get; set; } = 1;
+
     [Required(ErrorMessage = "Image URL is required")]
     public string? ImageUrl { get; set; }
     public string? CategoryName { get; set; }

@@ -13,11 +13,13 @@ namespace VShop.Web.Controllers
 
         private readonly IProductService _productService;
         private readonly ICategoryService _categoryService;
+        private readonly ICartService _cartService;
 
-        public HomeController(IProductService productService, ICategoryService categoryService)
+        public HomeController(IProductService productService, ICategoryService categoryService, ICartService cartService)
         {
             _productService = productService;
             _categoryService = categoryService;
+            _cartService = cartService;
         }
 
         public async Task<IActionResult> Index()
@@ -34,14 +36,51 @@ namespace VShop.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<ProductViewModel>> ProductDetails(int id)
         {
-            var product = await _productService.FindProductById(id, string.Empty);
+            var token = await HttpContext.GetTokenAsync("access_token");
+            var product = await _productService.FindProductById(id, token);
 
             if (product is null)
                 return View("Error");
 
             return View(product);
+        }
+
+        [HttpPost]
+        [ActionName("ProductDetails")]
+        [Authorize]
+        public async Task<ActionResult<ProductViewModel>> ProductDetailsPost(ProductViewModel productVM)
+        {
+            var token = await HttpContext.GetTokenAsync("access_token");
+            
+            CartViewModel cart = new()
+            {
+                CartHeader = new CartHeaderViewModel
+                {
+                    UserId = User.Claims.Where(u => u.Type == "sub")?.FirstOrDefault()?.Value
+                }
+            };
+
+            CartItemViewModel cartItem = new()
+            {
+                Quantity = productVM.Quantity,
+                ProductId = productVM.ProductId,
+                Product = await _productService.FindProductById(productVM.ProductId, token)
+            };
+
+            List<CartItemViewModel> cartItemsVM = new List<CartItemViewModel>();
+            cartItemsVM.Add(cartItem);
+            cart.CartItems = cartItemsVM;
+
+            var result = await _cartService.AddItemToCartAsync(cart, token);
+
+            if(result is not null)
+                return RedirectToAction(nameof(Index));
+
+            return View(productVM);
+
         }
 
         public IActionResult Privacy()

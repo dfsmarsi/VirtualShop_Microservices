@@ -10,19 +10,25 @@ namespace VShop.CartApi.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.RenameColumn(
-                name: "id",
-                table: "CartHeaders",
-                newName: "Id");
+            migrationBuilder.Sql(@"
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'CartHeaders' AND column_name = 'id') THEN
+        ALTER TABLE ""CartHeaders"" RENAME COLUMN id TO ""Id"";
+    END IF;
+END $$;");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.RenameColumn(
-                name: "Id",
-                table: "CartHeaders",
-                newName: "id");
+            migrationBuilder.Sql(@"
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'CartHeaders' AND column_name = 'Id') THEN
+        ALTER TABLE ""CartHeaders"" RENAME COLUMN ""Id"" TO id;
+    END IF;
+END $$;");
         }
     }
 }
