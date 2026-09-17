@@ -116,6 +116,11 @@ coverage*/
 **/PublishProfiles/
 
 # ========================
+# Identity Server keys (geradas em runtime, não devem ir ao repo)
+# ========================
+**/keys/*.json
+
+# ========================
 # Outros
 # ========================
 ~$*
