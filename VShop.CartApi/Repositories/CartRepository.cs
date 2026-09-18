@@ -17,16 +17,21 @@ namespace VShop.CartApi.Repositories
             _mapper = mapper;
         }
 
-        public async Task<CartDTO> GetCartByUserIdAsync(string userId)
+        public async Task<CartDTO?> GetCartByUserIdAsync(string userId)
         {
+            var cartHeader = await _context.CartHeaders.FirstOrDefaultAsync(ch => ch.UserId == userId);
+
+            if (cartHeader is null)
+                return null;
+
             Cart cart = new Cart
             {
-                CartHeader = await _context.CartHeaders.FirstOrDefaultAsync(ch => ch.UserId == userId)
+                CartHeader = cartHeader,
+                CartItems = await _context.CartItems
+                    .Where(ci => ci.CartHeaderId == cartHeader.Id)
+                    .Include(ci => ci.Product)
+                    .ToListAsync()
             };
-
-            cart.CartItems = _context.CartItems
-                .Where(ci => ci.CartHeaderId == cart.CartHeader.Id)
-                .Include(ci => ci.Product);
 
             return _mapper.Map<CartDTO>(cart);
         }
@@ -53,7 +58,7 @@ namespace VShop.CartApi.Repositories
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message, "Erro ao remover item do carrinho!");
+                Console.WriteLine($"Erro ao remover item do carrinho! {ex.Message}");
                 return false;
             }
         }
@@ -79,7 +84,7 @@ namespace VShop.CartApi.Repositories
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message, "Erro ao limpar o carrinho!");
+                Console.WriteLine($"Erro ao limpar o carrinho! {ex.Message}");
 
                 return false;
             }
@@ -166,7 +171,7 @@ namespace VShop.CartApi.Repositories
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message, "Erro ao salvar produto no banco!");
+                Console.WriteLine($"Erro ao salvar produto no banco! {ex.Message}");
             }
         }
 
