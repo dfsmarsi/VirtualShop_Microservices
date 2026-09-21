@@ -47,10 +47,26 @@
                 <div class="row mt-4">
                     <div class="col-md-6">
                         <label class="fw-semibold small text-muted d-block mb-1">Discount coupon</label>
-                        <div class="input-group">
-                            <input class="form-control" placeholder="Coupon code" disabled />
-                            <button class="btn btn-outline-secondary" disabled title="Coming soon">Apply</button>
-                        </div>
+                        @if (string.IsNullOrEmpty(Model.CartHeader.CouponCode))
+                        {
+                            <form asp-action="ApplyCounpon" method="post">
+                                <input asp-for="CartHeader.Id" hidden />
+                                <input asp-for="CartHeader.UserId" hidden />
+                                <div class="input-group">
+                                    <input asp-for="CartHeader.CouponCode" class="form-control" placeholder="Coupon code" />
+                                    <button type="submit" class="btn btn-outline-secondary">Apply</button>
+                                </div>
+                            </form>
+                        }
+                        else
+                        {
+                            <form asp-action="RemoveCoupon" method="post">
+                                <div class="input-group">
+                                    <input asp-for="CartHeader.CouponCode" class="form-control" disabled />
+                                    <button type="submit" class="btn btn-outline-danger">Remove</button>
+                                </div>
+                            </form>
+                        }
                     </div>
                     <div class="col-md-6 text-md-end mt-3 mt-md-0">
                         <span class="text-muted d-block">Total</span>
@@ -60,9 +76,9 @@
             </div>
 
             <div class="card-footer bg-white text-end">
-                <button class="btn btn-primary px-4" disabled title="Coming soon">
+                <a asp-action="Checkout" class="btn btn-primary px-4">
                     Checkout <i class="fa-solid fa-arrow-right ms-1"></i>
-                </button>
+                </a>
             </div>
         </div>
     </div>

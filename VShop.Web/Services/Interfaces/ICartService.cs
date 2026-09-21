@@ -10,10 +10,10 @@ namespace VShop.Web.Services.Interfaces
         Task<bool> RemoveItemFromCartAsync(int cartItemId, string token);
 
 
-        Task<bool> ApplyCouponAsync (CartViewModel cartVM, string couponCode, string token);
+        Task<bool> ApplyCouponAsync (CartViewModel cartVM, string token);
         Task<bool> RemoveCouponAsync(string userId, string token);
         Task<bool> ClearCartAsync(string userId, string token);
 
-        Task<CartViewModel> CheckoutAsync(CartHeaderViewModel cartHeaderVM, string token);
+        Task<CartHeaderViewModel> CheckoutAsync(CartHeaderViewModel cartHeaderVM, string token);
     }
 }

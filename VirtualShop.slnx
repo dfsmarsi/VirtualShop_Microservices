@@ -2,6 +2,7 @@
   <Folder Name="/Backend/">
     <Project Path="VirtualShop.ProductApi/VirtualShop.ProductApi.csproj" />
     <Project Path="VShop.CartApi/VShop.CartApi.csproj" Id="d8dc1e2f-6161-441c-9c1e-c7bdd09071e5" />
+    <Project Path="VShop.DiscountApi/VShop.DiscountApi.csproj" Id="83e37156-deba-49cb-bba1-ea8fdd112cd9" />
     <Project Path="VShopIdentityServer/VShopIdentityServer.csproj" Id="c6dc8517-56c6-455f-b105-9e7cedaea31c" />
   </Folder>
   <Folder Name="/Frontend/">

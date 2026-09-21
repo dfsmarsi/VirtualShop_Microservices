@@ -175,14 +175,34 @@ namespace VShop.CartApi.Repositories
             }
         }
 
-        public Task<bool> ApplyCouponAsync(string userId, string couponCode)
+        public async Task<bool> ApplyCouponAsync(string userId, string couponCode)
         {
-            throw new NotImplementedException();
+            var cartHeader = await _context.CartHeaders.FirstOrDefaultAsync(ch => ch.UserId == userId);
+
+            if (cartHeader is not null)
+            {
+                cartHeader.CouponCode = couponCode;
+                _context.CartHeaders.Update(cartHeader);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+
+            return false;
         }
 
-        public Task<bool> RemoveCouponAsync(string userId)
+        public async Task<bool> RemoveCouponAsync(string userId)
         {
-            throw new NotImplementedException();
+            var cartHeader = await _context.CartHeaders.FirstOrDefaultAsync(ch => ch.UserId == userId);
+
+            if(cartHeader is not null)
+            {
+                cartHeader.CouponCode = "";
+                _context.CartHeaders.Update(cartHeader);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+
+            return false;
         }
     }
 }

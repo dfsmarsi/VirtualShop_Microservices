@@ -9,10 +9,21 @@ namespace VShop.Web.Controllers
     public class CartController : Controller
     {
         private readonly ICartService _cartService;
+        private readonly ICouponService _couponService;
 
-        public CartController(ICartService cartService)
+        public CartController(ICartService cartService, ICouponService couponService)
         {
             _cartService = cartService;
+            _couponService = couponService;
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> Checkout()
+        {
+            CartViewModel? cartVM = await GetCartByUser();
+            
+            return View(cartVM);
         }
 
         [Authorize]
@@ -48,13 +59,71 @@ namespace VShop.Web.Controllers
 
             if(cart?.CartHeader is not null)
             {
+                if (!string.IsNullOrEmpty(cart.CartHeader.CouponCode))
+                {
+                    var coupon = await _couponService.GetDiscountCoupon(cart.CartHeader.CouponCode, await GetAccessTokenAsync());
+
+                    if(coupon?.CouponCode is not null)
+                    {
+                        cart.CartHeader.Discount = coupon.Discount;
+                    }
+                }
+
                 foreach (var item in cart.CartItems)
                 {
                     cart.CartHeader.TotalAmount += (decimal)(item.Product.Price * item.Quantity);
                 }
+
+                cart.CartHeader.TotalAmount = cart.CartHeader.TotalAmount -
+                    (cart.CartHeader.TotalAmount * cart.CartHeader.Discount)/100;
             }
 
             return cart;
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> ApplyCounpon(CartViewModel cartVM)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _cartService.ApplyCouponAsync(cartVM, await GetAccessTokenAsync());
+            
+                if (result)
+                    return RedirectToAction(nameof(Index));
+            }
+
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> RemoveCoupon()
+        {
+            var result = await _cartService.RemoveCouponAsync(GetUserId(), await GetAccessTokenAsync());
+
+            if(result)
+                return RedirectToAction(nameof(Index));
+            
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Checkout (CartViewModel cartVM)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _cartService.CheckoutAsync(cartVM.CartHeader, await GetAccessTokenAsync());
+
+                if (result is not null)
+                    return RedirectToAction(nameof(CheckoutCompleted));
+            }
+            return View(cartVM);
+        }
+
+        [HttpGet]
+        [Authorize]
+        public IActionResult CheckoutCompleted()
+        {
+            return View();
         }
 
         private string GetUserId()

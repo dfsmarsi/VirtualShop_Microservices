@@ -59,4 +59,40 @@ public class CartController : ControllerBase
 
         return Ok(status);
     }
+
+    [HttpPost("applycoupon")]
+    public async Task<ActionResult<CartDTO>> ApplyCoupon(CartDTO cartDTO)
+    {
+        var result = await _cartRepository.ApplyCouponAsync(cartDTO.CartHeader.UserId, cartDTO.CartHeader.CouponCode);
+
+        if (!result)
+            return BadRequest($"Cart not found for UserId = {cartDTO.CartHeader.UserId}");
+
+        return Ok(result);
+    }
+
+    [HttpDelete("removecoupon/{userId}")]
+    public async Task<ActionResult<CartDTO>> RemoveCoupon(string userId)
+    {
+        var result = await _cartRepository.RemoveCouponAsync(userId);
+
+        if (!result)
+            return BadRequest($"Discount coupon not found for UserId = {userId}");
+
+        return Ok(result);
+    }
+
+    [HttpPost("checkout")]
+    public async Task<ActionResult<CheckoutHeaderDTO>> Checkout(CheckoutHeaderDTO checkoutHeaderDto)
+    {
+        var cart = await _cartRepository.GetCartByUserIdAsync(checkoutHeaderDto.UserId);
+
+        if (cart is null)
+            return BadRequest("Cart not found for the specified user.");
+
+        checkoutHeaderDto.CartItems = cart.CartItems;
+        checkoutHeaderDto.DateTime = DateTime.UtcNow;
+
+        return Ok(checkoutHeaderDto);
+    }
 }

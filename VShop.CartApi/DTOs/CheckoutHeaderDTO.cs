@@ -1,6 +1,6 @@
-﻿namespace VShop.Web.Models
+﻿namespace VShop.CartApi.DTOs
 {
-    public class CartHeaderViewModel
+    public class CheckoutHeaderDTO
     {
         public int Id { get; set; }
         public string UserId { get; set; } = string.Empty;
@@ -18,5 +18,8 @@
         public string NameOnCard { get; set; } = string.Empty;
         public string CVV { get; set; } = string.Empty;
         public string ExpireMonthYear { get; set; } = string.Empty;
+
+        public int CartTotalItems { get; set; }
+        public IEnumerable<CartItemDTO>? CartItems { get; set; }
     }
 }

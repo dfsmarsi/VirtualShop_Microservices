@@ -1,10 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Scalar.AspNetCore;
 using System.Text.Json.Serialization;
-using VirtualShop.ProductApi.OpenApi;
-using VShop.CartApi.Context;
-using VShop.CartApi.Repositories;
+using VShop.DiscountApi.Context;
+using VShop.DiscountApi.OpenApi;
+using VShop.DiscountApi.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,7 +43,7 @@ builder.Services.AddAuthorization(opt => {
     });
 });
 
-builder.Services.AddScoped<ICartRepository, CartRepository>();
+builder.Services.AddScoped<ICouponRepository, CouponRepository>();
 
 var app = builder.Build();
 
@@ -52,7 +51,6 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
-    app.MapScalarApiReference();
 }
 
 app.UseHttpsRedirection();
@@ -61,7 +59,7 @@ app.UseCors("CorsPolicy");
 
 app.UseRouting();
 
-app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseAuthorization();
 

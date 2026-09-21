@@ -2,8 +2,9 @@
 using System.Text;
 using System.Text.Json;
 using VShop.Web.Models;
+using VShop.Web.Services.Interfaces;
 
-namespace VShop.Web.Services.Interfaces
+namespace VShop.Web.Services
 {
     public class CartService : ICartService
     {
@@ -11,6 +12,7 @@ namespace VShop.Web.Services.Interfaces
         private readonly JsonSerializerOptions _jsonSerializerOptions;
         private const string apiEndpoint = "/api/cart";
         private CartViewModel _cartViewModel = new CartViewModel();
+        private CartHeaderViewModel _cartHeaderViewModel = new CartHeaderViewModel();
 
         public CartService(IHttpClientFactory httpClientFactory)
         {
@@ -108,21 +110,62 @@ namespace VShop.Web.Services.Interfaces
             return cartUpdated;
         }
 
-        public Task<CartViewModel> CheckoutAsync(CartHeaderViewModel cartHeaderVM, string token)
+        public async Task<CartHeaderViewModel> CheckoutAsync(CartHeaderViewModel cartHeaderVM, string token)
         {
-            throw new NotImplementedException();
+            var client = _httpClientFactory.CreateClient("CartApi");
+            PutTokenInHeaderAuthorization(token, client);
+
+            StringContent content = new StringContent(JsonSerializer.Serialize(cartHeaderVM), Encoding.UTF8, "application/json");
+
+            using (var response = await client.PostAsync($"{apiEndpoint}/checkout/", content))
+            {
+                if (response.IsSuccessStatusCode)
+                {
+                    var apiResponse = await response.Content.ReadAsStreamAsync();
+                    cartHeaderVM = await JsonSerializer.DeserializeAsync<CartHeaderViewModel>(apiResponse, _jsonSerializerOptions);
+                }
+                else
+                {
+                    return null;
+                }
+
+                return cartHeaderVM;
+            }
         }
 
-        public Task<bool> ApplyCouponAsync(CartViewModel cartVM, string couponCode, string token)
+        public async Task<bool> ApplyCouponAsync(CartViewModel cartVM, string token)
         {
-            throw new NotImplementedException();
+            var client = _httpClientFactory.CreateClient("CartApi");
+            PutTokenInHeaderAuthorization(token, client);
+
+            StringContent content = new StringContent(JsonSerializer.Serialize(cartVM), Encoding.UTF8, "application/json");
+
+            using (var response = await client.PostAsync($"{apiEndpoint}/applycoupon/", content))
+            {
+                if (response.IsSuccessStatusCode)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
-        public Task<bool> RemoveCouponAsync(string userId, string token)
+        public async Task<bool> RemoveCouponAsync(string userId, string token)
         {
-            throw new NotImplementedException();
-        }
+            var client = _httpClientFactory.CreateClient("CartApi");
+            PutTokenInHeaderAuthorization(token, client);
 
+            using (var response = await client.DeleteAsync($"{apiEndpoint}/removecoupon/{userId}"))
+            {
+                if (response.IsSuccessStatusCode)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
 
         private void PutTokenInHeaderAuthorization(string token, HttpClient client)
         {
